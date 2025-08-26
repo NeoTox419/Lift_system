@@ -14,18 +14,33 @@ public class ElevatorController {
     private final ElevatorService svc;
     public ElevatorController(ElevatorService svc) { this.svc = svc; };
 
-    @GetMapping
-    public Collection<Elevator> list() { return svc.list(); }
+    @GetMapping("/status")
+    public Elevator getLift() {
+        return svc.get(1);
+    }
 
-    @GetMapping("/{id}/request")
-    public Map<String, Object> request(@PathVariable int id, @RequestParam int floor) {
-        svc.requestFloor(id,floor);
-        return Map.of("lift",id, "queuedFloor", floor);
+    @GetMapping("/request/{floor}")
+    public Map<String, Object> requestByPath(@PathVariable int floor) {
+        svc.requestFloor(1,floor);
+        return Map.of("requestedFloor", floor);
+    }
+
+    @GetMapping("/request")
+    public Map<String, Object> requestByQuery(@RequestParam(required = false) Integer floor) {
+        if (floor == null) {
+            return Map.of(
+                    "error", "MISSING_FLOOR",
+                    "usage", "/api/lifts/request/{floor} or /api/lifts/request?floor=NUMBER",
+                    "range", "valid floors are 0.."+svc.getMaxFloors()
+            );
+        }
+        svc.requestFloor(1, floor);
+        return Map.of("requestedFloor", floor);
     }
 
     @GetMapping("/tick")
-    public Map<String, String> tick(){
-        svc.tickAll();
-        return Map.of("moved", "ok");
+    public Map<String, Object> tick() {
+        boolean moved = svc.tickAll();
+        return Map.of("moved", moved);
     }
 }

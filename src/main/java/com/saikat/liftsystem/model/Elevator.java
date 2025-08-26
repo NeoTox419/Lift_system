@@ -15,13 +15,17 @@ public class Elevator {
     public ElevatorDirection getDirection() { return direction; }
     public Deque<Integer> getTargets() { return targets; }
 
-    public void stepOnce() {
-        if (targets.isEmpty()) { direction = ElevatorDirection.IDLE; return; }
+    public boolean stepOnce() {
+        if (targets.isEmpty()) { direction = ElevatorDirection.IDLE; return false; }
+        int before = currentFloor;
         int target = targets.peekFirst();
         if (currentFloor < target) { currentFloor++; direction = ElevatorDirection.UP; }
         else if (currentFloor > target) { currentFloor--; direction = ElevatorDirection.DOWN; }
         else { targets.pollFirst(); if (targets.isEmpty()) direction = ElevatorDirection.IDLE; }
+        return currentFloor != before;
     }
 
     public void addTarget(int floor) { if (!targets.contains(floor)) targets.addLast(floor); }
+
+
 }

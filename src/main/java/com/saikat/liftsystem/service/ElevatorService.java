@@ -11,15 +11,18 @@ public class ElevatorService {
     private final Map<Integer, Elevator> elevators = new HashMap<>();
     private final int maxFloors; // comes from the number entered at start
 
+    private volatile boolean autoEnabled = true;
+
     public ElevatorService(@Value("${building.maxFloors}") int maxFloors) {
         this.maxFloors = maxFloors;
         elevators.put(1, new Elevator(1)); //one lift
     }
 
+    public boolean isAutoEnabled() { return autoEnabled; }
+    public void setAutoEnabled(boolean enabled) { this.autoEnabled = enabled; }
+
     public int getMaxFloors() { return maxFloors; }
-
     public Collection<Elevator> list() { return elevators.values(); }
-
     public Elevator get(int id) { return elevators.get(id); }
 
     public void requestFloor(int id, int floor) {
@@ -30,5 +33,8 @@ public class ElevatorService {
         if (e != null) e.addTarget(floor);
     }
 
-    public void tickAll() { elevators.values().forEach(Elevator::stepOnce); }
+    public boolean tickAll() {
+        Elevator e = elevators.get(1);
+        return e != null && e.stepOnce();
+    }
 }
