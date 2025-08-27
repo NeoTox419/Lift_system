@@ -25,9 +25,9 @@ public class AutoMoveJob {
         svc.tickAll();
 
         Elevator e = svc.get(1);
-        if(e!=null){
-            log.info("[AUTO] floor{} dir={} queue{}",
-                      e.getCurrentFloor(), e.getDirection(), e.getTargets());
+        if (e != null) {
+            log.info("[AUTO] floor={} dir={} nextStop={} pending={}",
+                    e.getCurrentFloor(), e.getDirection(), e.getNextStop(), e.getPendingCount());
         }
     }
 }
