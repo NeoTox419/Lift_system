@@ -5,7 +5,9 @@ import com.saikat.liftsystem.model.RequestAck;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class ElevatorService {
@@ -27,7 +29,6 @@ public class ElevatorService {
 
     public synchronized RequestAck requestFloor(int id, int floor) {
         if (floor < 0 || floor > maxFloors) {
-            // Converted to 400 JSON by ApiErrors
             throw new IllegalArgumentException("Invalid floor " + floor + " (allowed: 0.." + maxFloors + ")");
         }
         Elevator e = elevators.get(id);
@@ -38,16 +39,16 @@ public class ElevatorService {
         if (e.getCurrentFloor() == floor) {
             return RequestAck.alreadyHere(floor);
         }
-        if (e.hasTarget(floor)) {
+        if (e.hasStop(floor)) {
             return RequestAck.duplicate(floor);
         }
 
-        e.addTarget(floor);
+        e.addStopLook(floor);
         return RequestAck.ok(floor);
     }
 
     public synchronized boolean tickAll() {
         Elevator e = elevators.get(1);
-        return e != null && e.stepOnce();
+        return e != null && e.stepOnceLook();
     }
 }
