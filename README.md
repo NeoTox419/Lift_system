@@ -1,5 +1,4 @@
 
-**video demonstration** - ""
 ---
 # Lift System — Elevator Simulation (Java + Spring Boot)
 
